@@ -1,0 +1,221 @@
+/*§
+  ===========================================================================
+  KnapScal
+  ===========================================================================
+  Copyright (C) 2015 Gianluca Costa
+  ===========================================================================
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  ===========================================================================
+*/
+
+buildscript {
+    repositories {
+        maven {
+            url 'https://dl.bintray.com/giancosta86/Hephaestus'
+        }
+
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'info.gianlucacosta.moonlicense:moonlicense-gradle:3.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.1'
+        classpath 'info.gianlucacosta.aurora:aurora:2.1'
+    }
+}
+
+import groovy.xml.NamespaceBuilder
+import groovy.xml.NamespaceBuilderSupport
+import org.apache.tools.ant.filters.ReplaceTokens
+
+
+apply plugin: 'scala'
+apply plugin: 'application'
+apply plugin: 'info.gianlucacosta.aurora'
+
+
+
+group = 'info.gianlucacosta.knapscal'
+archivesBaseName = 'knapscal'
+version = '1.0'
+
+description = 'ScalaFX didactic application for the Knapsack problem'
+
+
+project.ext.facebookPage = 'https://www.facebook.com/pages/KnapScal/384118128442058'
+
+
+mainClassName = 'info.gianlucacosta.knapscal.app.App'
+
+
+
+dependencies {
+    compile 'info.gianlucacosta.knapscal:knapscal-core:1.0'
+    compile 'info.gianlucacosta.helios:helios-fx:1.7'
+
+    compile 'org.scala-lang:scala-library:2.11.6'
+    compile 'org.scalafx:scalafx_2.11:8.0.40-R8'
+}
+
+
+final String jdkHome = System.env['JAVA_HOME']
+
+
+final NamespaceBuilderSupport antfx = NamespaceBuilder.newInstance(
+        ant,
+        'javafx:com.sun.javafx.tools.ant'
+)
+
+ant.taskdef(
+        resource: 'com/sun/javafx/tools/ant/antlib.xml',
+        uri: 'javafx:com.sun.javafx.tools.ant',
+        classpath: "${jdkHome}/lib/ant-javafx.jar"
+)
+
+
+final String webstartTempDir = "${project.buildDir}/tmp/webstart"
+
+
+processResources {
+    filesMatching('**/App.properties.xml') {
+        filter ReplaceTokens, tokens: [
+                'name'          : project.name,
+                'version'       : project.version,
+                'copyrightYears': project.moonLicense.getCopyrightYears(),
+                'license'       : project.moonLicense.license.name,
+                'url'           : project.url.toString(),
+                'facebookPage'  : project.facebookPage,
+                'release'       : project.auroraSettings.release.toString()
+        ]
+    }
+}
+
+
+aurora {
+    docTask = 'scaladoc'
+    gitHubUser = 'giancosta86'
+
+    author {
+        name = 'Gianluca Costa'
+        email = 'gianluca@gianlucacosta.info'
+        url = 'http://gianlucacosta.info/'
+    }
+
+
+    bintray {
+        user = project.bintrayUser
+        key = project.bintrayKey
+        repo = 'Hephaestus'
+        licenses = ['Apache-2.0']
+        labels = ['Knapsack', 'didactic', 'application', 'Scala', 'ScalaFX', 'Java', 'JavaFX']
+    }
+}
+
+
+moonLicense {
+    license = apache2
+
+    productInfo {
+        productName = 'KnapScal'
+        inceptionYear = 2015
+        copyrightHolder = 'Gianluca Costa'
+    }
+}
+
+
+
+task webstartCopyJars(type: Copy, dependsOn: 'installDist') {
+    from "${project.buildDir}/install/${project.name}"
+    into webstartTempDir
+    include 'lib/*.jar'
+}
+
+
+task('webstartSign', dependsOn: 'webstartCopyJars') << {
+    antfx.signjar(
+            keystore: project.'jar.signing.keystore.path',
+            storepass: project.'jar.signing.keystore.password',
+            storetype: project.'jar.signing.keystore.type',
+            alias: project.'jar.signing.key.alias'
+    ) {
+        antfx.fileset(
+                dir: "${webstartTempDir}",
+                includes: 'lib/*.jar'
+        )
+    }
+}
+
+
+task('webstart', dependsOn: 'webstartSign') << {
+    antfx.deploy(
+            outdir: "${project.buildDir}/webstart",
+            outfile: 'KnapScal',
+            width: 670,
+            height: 426,
+            offlineAllowed: true
+    ) {
+        antfx.application(
+                name: 'KnapScal',
+                mainClass: project.mainClassName
+        )
+
+        antfx.platform(
+                javafx: '8.0+',
+                j2se: '1.8+'
+        )
+
+        antfx.info(
+                title: 'KnapScal',
+                vendor: 'Gianluca Costa',
+                copyright: "Copyright © ${moonLicense.copyrightYears} Gianluca Costa",
+                license: moonLicense.license.name,
+                description: project.description
+        ) {
+
+            antfx.icon(
+                    href: 'mainIcon32.png'
+            )
+        }
+
+
+        antfx.permissions(
+                elevated: true,
+                cachecertificates: true
+        )
+
+
+        antfx.preferences(
+                shortcut: true,
+                install: false,
+                menu: false
+        )
+
+
+        antfx.resources {
+            antfx.fileset(
+                    type: 'icon',
+                    dir: "${project.projectDir}/src/main/resources/info/gianlucacosta/knapscal/icons",
+                    includes: 'mainIcon32.png'
+            )
+
+
+            antfx.fileset(
+                    dir: webstartTempDir,
+                    includes: 'lib/*.jar'
+            )
+        }
+    }
+}
+
+
+assemble.dependsOn('distZip', 'webstart')
