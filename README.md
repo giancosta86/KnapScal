@@ -2,7 +2,7 @@
 
 *ScalaFX didactic application for the Knapsack problem*
 
- 
+
 
 ### Introduction
 
@@ -28,13 +28,12 @@ KnapScal requires Java 8 Update 45 or later compatible version.
 
 
 
-### Download
+### Running KnapScal
 
-The binary package can be downloaded [here](https://github.com/giancosta86/KnapScal/releases/download/v1.0/KnapScal-1.0.zip).
+The suggested way to run KnapScal is [MoonDeploy](https://github.com/giancosta86/moondeploy), as it will automatically download and launch the application - just go to the [latest release](https://github.com/giancosta86/KnapScal/releases/latest) page and open the file **App.moondeploy**.
 
-To run the application:
-
-1. Decompress the archive
+Otherwise, to start the application:
+1. Download and decompress the zip archive
 2. Run the file *bin/KnapScal* (on UNIX) or *bin/KnapScal.bat* (on Windows)
 
 
