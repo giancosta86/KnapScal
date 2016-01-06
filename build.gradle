@@ -81,6 +81,19 @@ processResources {
 }
 
 
+
+startScripts {
+    def originalWindowsTemplateString = windowsStartScriptGenerator.template.asString()
+    def javawTemplateString =
+            originalWindowsTemplateString
+                    .replace("java.exe", "javaw.exe")
+                    .replace("\"%JAVA_EXE%\" %DEFAULT_JVM_OPTS%", "start \"\" /B \"%JAVA_EXE%\" %DEFAULT_JVM_OPTS%")
+    def javawTemplate = project.resources.text.fromString(javawTemplateString)
+    windowsStartScriptGenerator.template = javawTemplate
+}
+
+
+
 aurora {
     docTask = 'scaladoc'
     gitHubUser = 'giancosta86'
