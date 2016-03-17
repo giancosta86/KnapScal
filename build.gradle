@@ -45,7 +45,7 @@ apply plugin: 'info.gianlucacosta.aurora'
 
 group = 'info.gianlucacosta.knapscal'
 archivesBaseName = 'knapscal'
-version = '1.1'
+version = '2.0'
 
 description = 'ScalaFX didactic application for the Knapsack problem'
 
@@ -60,6 +60,7 @@ mainClassName = 'info.gianlucacosta.knapscal.app.App'
 dependencies {
     compile 'info.gianlucacosta.knapscal:knapscal-core:1.0'
     compile 'info.gianlucacosta.helios:helios-fx:1.7'
+    compile 'info.gianlucacosta.eighthbridge:eighthbridge:1.0'
 
     compile 'org.scala-lang:scala-library:2.11.6'
     compile 'org.scalafx:scalafx_2.11:8.0.40-R8'

@@ -20,15 +20,45 @@
 
 package info.gianlucacosta.knapscal.app.branchbound
 
-import info.gianlucacosta.knapscal.knapsack.branchbound.{UpperBoundFunction, BranchBoundSolver}
-import info.gianlucacosta.knapscal.knapsack.{Problem}
+import info.gianlucacosta.eighthbridge.util.fx.dialogs.InputDialogs
+import info.gianlucacosta.knapscal.knapsack.Problem
+import info.gianlucacosta.knapscal.knapsack.branchbound.{BranchBoundSolver, UpperBoundFunction}
+
+import scalafx.geometry.Dimension2D
 
 abstract class BranchBoundStrategy(name: String, upperBoundFunction: UpperBoundFunction) {
-  def run(problem: Problem) = {
+  def run(problem: Problem): Unit = {
     val solver = new BranchBoundSolver(upperBoundFunction)
     val solution = solver.solve(problem)
 
-    val solutionDialog = new SolutionDialog(problem, solution)
+    val estimatedNodeWidthInput = InputDialogs.askForDouble(
+      message = "Increase if nodes overlap:",
+      initialValue = 30,
+      minValue = 0,
+      header = "Estimated node width")
+
+    if (estimatedNodeWidthInput.isEmpty) {
+      return
+    }
+
+
+    val estimatedNodeHeightInput = InputDialogs.askForDouble(
+      message = "Increase if nodes overlap:",
+      initialValue = 150,
+      minValue = 0,
+      header = "Estimated node height")
+
+    if (estimatedNodeHeightInput.isEmpty) {
+      return
+    }
+
+
+    val estimatedNodeDimension = new Dimension2D(
+      estimatedNodeWidthInput.get,
+      estimatedNodeHeightInput.get
+    )
+
+    val solutionDialog = new SolutionDialog(problem, solution, estimatedNodeDimension)
     solutionDialog.showAndWait()
   }
 

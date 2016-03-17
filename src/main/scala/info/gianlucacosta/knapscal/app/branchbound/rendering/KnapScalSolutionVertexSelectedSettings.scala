@@ -18,32 +18,19 @@
   ===========================================================================
 */
 
-package info.gianlucacosta.knapscal.app
+package info.gianlucacosta.knapscal.app.branchbound.rendering
 
-import java.awt.Desktop
-import java.io.IOException
-import java.net.{URI, URISyntaxException}
+import info.gianlucacosta.eighthbridge.graphs.point2point.visual.VisualVertexSettings
 
-object DesktopUtils {
-  def openBrowser(url: String) {
-    val browserThread = new Thread {
-      override def run() {
-        val desktop = Desktop.getDesktop()
+import scalafx.scene.paint.Color
 
-        if (desktop == null) {
-          throw new UnsupportedOperationException()
-        }
-
-        try {
-          desktop.browse(new URI(url))
-        } catch {
-          case ex@(_: IOException | _: URISyntaxException) => {
-            throw new UnsupportedOperationException(ex)
-          }
-        }
-      }
-    }
-
-    browserThread.start()
-  }
-}
+object KnapScalSolutionVertexSelectedSettings extends VisualVertexSettings(
+  background = Color.valueOf("#69d469"),
+  borderSize = 2,
+  borderColor = Color.Black,
+  fontName = "Arial",
+  fontSize = 14,
+  fontColor = Color.Black,
+  padding = 12,
+  rounding = 16
+)

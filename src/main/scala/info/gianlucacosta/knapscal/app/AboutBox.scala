@@ -20,14 +20,13 @@
 
 package info.gianlucacosta.knapscal.app
 
-import scalafx.geometry.{Pos, Insets}
-import scalafx.scene.control.{Button, Label, Alert}
-import scalafx.scene.control.Alert.AlertType
-import scalafx.scene.image.{Image, ImageView}
-import scalafx.scene.layout.{HBox, VBox, BorderPane}
-import scalafx.scene.text.{FontWeight, Font}
-
 import scalafx.Includes._
+import scalafx.geometry.{Insets, Pos}
+import scalafx.scene.control.Alert.AlertType
+import scalafx.scene.control.{Alert, Button, Label}
+import scalafx.scene.image.{Image, ImageView}
+import scalafx.scene.layout.{BorderPane, HBox, VBox}
+import scalafx.scene.text.{Font, FontWeight}
 
 
 private object AboutBox extends Alert(AlertType.Information) {
@@ -77,7 +76,7 @@ private object AboutBox extends Alert(AlertType.Information) {
 
       alignment = Pos.Center
 
-      children = Seq (
+      children = Seq(
         new Button("Visit website") {
           prefWidth = 170
 

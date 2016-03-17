@@ -20,18 +20,17 @@
 
 package info.gianlucacosta.knapscal.app
 
-import javafx.fxml.FXML
-
-import info.gianlucacosta.knapscal.app.branchbound.strategies.{OptimizedDantzigStrategy, MartelloTothStrategy, DantzigStrategy}
-import info.gianlucacosta.knapscal.knapsack.{ItemsFormatter, ItemsParser, Problem}
-import info.gianlucacosta.knapscal.knapsack.dynamic.full.DynamicProgrammingSolver
-import info.gianlucacosta.knapscal.knapsack.dynamic.optimized.OptimizedDynamicProgrammingSolver
-
 import javafx.event.ActionEvent
+import javafx.fxml.FXML
 import javafx.scene.control.{TextArea, TextField}
 
+import info.gianlucacosta.knapscal.app.branchbound.strategies.{DantzigStrategy, MartelloTothStrategy, OptimizedDantzigStrategy}
+import info.gianlucacosta.knapscal.knapsack.dynamic.full.DynamicProgrammingSolver
+import info.gianlucacosta.knapscal.knapsack.dynamic.optimized.OptimizedDynamicProgrammingSolver
+import info.gianlucacosta.knapscal.knapsack.{ItemsFormatter, ItemsParser, Problem}
+
 import scalafx.scene.control.Alert.AlertType
-import scalafx.scene.control.{ChoiceDialog, Alert}
+import scalafx.scene.control.{Alert, ChoiceDialog}
 
 private class MainSceneController {
   private val itemsParser = new ItemsParser
@@ -110,8 +109,9 @@ private class MainSceneController {
       editable = false
 
 
-      text = s"""Ordered problem items: ${ItemsFormatter.format(problem.get.items)}
-          |
+      text =
+        s"""Ordered problem items: ${ItemsFormatter.format(problem.get.items)}
+            |
           |${solution.toString()}
         """.stripMargin
     }

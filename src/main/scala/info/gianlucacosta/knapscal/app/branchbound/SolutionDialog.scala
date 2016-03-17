@@ -20,64 +20,79 @@
 
 package info.gianlucacosta.knapscal.app.branchbound
 
+import info.gianlucacosta.eighthbridge.fx.canvas.GraphCanvas
+import info.gianlucacosta.eighthbridge.fx.canvas.basic.DragDropController
+import info.gianlucacosta.eighthbridge.graphs.point2point.visual.{DefaultVisualGraph, DefaultVisualLink, VisualGraph}
+import info.gianlucacosta.knapscal.app.branchbound.rendering.KnapScalVertex
+import info.gianlucacosta.knapscal.knapsack.branchbound.{Node, Solution}
 import info.gianlucacosta.knapscal.knapsack.{ItemsFormatter, Problem}
-import info.gianlucacosta.knapscal.knapsack.branchbound.{Solution, Node}
 
-import scalafx.geometry.Insets
+import scalafx.geometry.{Dimension2D, Insets, Point2D}
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control._
 import scalafx.scene.layout.BorderPane
 
-private class SolutionDialog(problem: Problem, solution: Solution) extends Alert(AlertType.Information) {
+
+private class SolutionDialog(problem: Problem, solution: Solution, estimatedNodeDimension: Dimension2D) extends Alert(AlertType.Information) {
   title = "Knapsack - Branch & Bound"
   headerText = "Solution"
-  contentText = solution.bestNode.toString()
+  contentText = solution.bestNode.toString
+  resizable = true
 
-  val solutionTextArea = new TextArea {
+
+  private val solutionTextArea = new TextArea {
     prefHeight = 140
     editable = false
     margin = Insets(0, 0, 15, 0)
 
-    text = s"""Ordered problem items: ${ItemsFormatter.format(problem.items)}
-        |
+    text =
+      s"""Ordered problem items: ${ItemsFormatter.format(problem.items)}
+          |
         |${solution}""".stripMargin
   }
 
 
-  val treeRootItem = buildTreeItem(solution.rootNode)
-  val solutionTreeView = new TreeView[String](treeRootItem) {
-    margin = Insets(0, 0, 0, 20)
-  }
-
-
-  val legendLabel = new Label {
-    text = """NODE LEGEND:
-             |
-             |* Node index
-             |
-             |* Generating branch condition
-             |
-             |* Ū = computed upper bound
-             |* U = inherited upper bound
-             |
-             |* P = total profit or solution value
-             |
-             |* W = total weight
-             |
-             |* I = Items taken
-             |
-             |*STOP* = Node exploration stopped
-             |*SOL* = The node is a solution
-           """.stripMargin
+  private val legendLabel = new Label {
+    text =
+      """NODE LEGEND:
+        |
+        |* Index = exploration index
+        |
+        |* Ū = computed upper bound
+        |* U = inherited upper bound
+        |
+        |* P = cumulated profit
+        |* W = cumulated weight
+        |
+        |* I = Items taken
+        |
+        |*STOP* = Skip more branching
+        |
+        |*SOLUTION* = A solution node
+        |
+        |* z = solution value
+      """.stripMargin
 
     margin = Insets(0, 5, 0, 0)
   }
 
 
-  val solutionPane = new BorderPane {
+  private val visualGraph = buildVisualGraph
+
+  private val solutionScrollPane = new ScrollPane {
+    content = new GraphCanvas(
+      new DragDropController,
+      visualGraph
+    )
+
+    hvalue = hmax() / 2
+  }
+
+
+  private val solutionPane = new BorderPane {
     top = solutionTextArea
     left = legendLabel
-    center = solutionTreeView
+    center = solutionScrollPane
 
     prefWidth = 1100
     prefHeight = 550
@@ -86,20 +101,123 @@ private class SolutionDialog(problem: Problem, solution: Solution) extends Alert
   dialogPane().setContent(solutionPane)
 
 
-  private def buildTreeItem(modelNode: Node): TreeItem[String] = {
-    val result = new TreeItem[String](modelNode.toString())
-    result.expanded = true
+  private def buildVisualGraph: VisualGraph = {
+    val horizontalLeafPadding = 10
+    val verticalPadding = 40
 
-    if (modelNode.takingNode.isDefined) {
-      val takingViewNode = buildTreeItem(modelNode.takingNode.get)
-      result.children.add(takingViewNode)
+    val itemsCount = problem.items.size
+    val levelsCount = itemsCount + 1
+    val leavesCount = math.pow(2, itemsCount)
+
+    val estimatedNodeWidth = estimatedNodeDimension.width
+    val estimatedNodeHeight = estimatedNodeDimension.height
+
+
+    val graphWidth =
+      (
+        2 * horizontalLeafPadding
+          + estimatedNodeDimension.width * leavesCount
+          + horizontalLeafPadding * (leavesCount - 1)
+        )
+
+
+    val graphHeight =
+      (
+        2 * verticalPadding
+          + estimatedNodeHeight * levelsCount
+          + verticalPadding * (levelsCount - 1)
+        )
+
+
+    def horizontalPadding(levelIndex: Int): Double =
+      if (levelIndex == levelsCount - 1) {
+        horizontalLeafPadding
+      } else {
+        val nextLevelPadding = horizontalPadding(levelIndex + 1)
+        nextLevelPadding + 2 * estimatedNodeWidth + (nextLevelPadding - estimatedNodeWidth)
+      }
+
+
+    val rootNode = solution.rootNode
+
+    val rootVertex = new KnapScalVertex(
+      center = new Point2D(
+        graphWidth / 2,
+        verticalPadding + estimatedNodeHeight / 2
+      ),
+
+      node = rootNode
+    )
+
+
+    val rootGraph = new DefaultVisualGraph(
+      false,
+      new Dimension2D(graphWidth, graphHeight)
+    ).addVertex(rootVertex)
+
+
+    def recursiveBuildGraph(parentGraph: VisualGraph, parentNode: Node, parentVertex: KnapScalVertex): VisualGraph = {
+      val currentLevelIndex = parentNode.level + 1
+
+      if (currentLevelIndex == levelsCount) {
+        return parentGraph
+      }
+
+      val currentHorizontalPadding = math.abs(horizontalPadding(currentLevelIndex))
+
+      val deltaFromParentCenter = new Point2D(
+        currentHorizontalPadding / 2 + estimatedNodeWidth,
+        verticalPadding + estimatedNodeHeight
+      )
+
+      var solutionGraph = parentGraph
+
+      parentNode.takingNode.foreach(takingNode => {
+        val takingVertex = new KnapScalVertex(
+          center = new Point2D(
+            parentVertex.center.x - deltaFromParentCenter.x,
+            parentVertex.center.y + deltaFromParentCenter.y
+          ),
+
+          node = takingNode
+        )
+
+        val takingLink = new DefaultVisualLink(text = s"X${currentLevelIndex} = 1")
+
+        val takingGraph =
+          solutionGraph
+            .addVertex(takingVertex)
+            .bindLink(parentVertex, takingVertex, takingLink)
+
+
+        solutionGraph = recursiveBuildGraph(takingGraph, takingNode, takingVertex)
+      })
+
+
+      parentNode.leavingNode.foreach(leavingNode => {
+        val leavingVertex = new KnapScalVertex(
+          center = new Point2D(
+            parentVertex.center.x + deltaFromParentCenter.x,
+            parentVertex.center.y + deltaFromParentCenter.y
+          ),
+
+          node = leavingNode
+        )
+
+        val leavingLink = new DefaultVisualLink(text = s"X${currentLevelIndex} = 0")
+
+        val leavingGraph = solutionGraph
+          .addVertex(leavingVertex)
+          .bindLink(parentVertex, leavingVertex, leavingLink)
+
+        solutionGraph = recursiveBuildGraph(leavingGraph, leavingNode, leavingVertex)
+      })
+
+
+      solutionGraph
     }
 
-    if (modelNode.leavingNode.isDefined) {
-      val leavingViewNode = buildTreeItem(modelNode.leavingNode.get)
-      result.children.add(leavingViewNode)
-    }
 
-    return result
+    recursiveBuildGraph(rootGraph, rootNode, rootVertex)
   }
 }
