@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>KnapScal by giancosta86</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">KnapScal</h1>
+      <h2 class="project-tagline">ScalaFX didactic application for the Knapsack problem</h2>
+      <a href="https://github.com/giancosta86/KnapScal" class="btn">View on GitHub</a>
+      <a href="https://github.com/giancosta86/KnapScal/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/giancosta86/KnapScal/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="knapscal" class="anchor" href="#knapscal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>KnapScal</h1>
+
+<p><em>ScalaFX didactic application for the Knapsack problem</em></p>
+
+<h2>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction</h2>
+
+<p>KnapScal is a didactic ScalaFX application dedicated to the <a href="https://en.wikipedia.org/wiki/Knapsack_problem">Knapsack problem</a>.</p>
+
+<p>It can solve an instance of the problem by employing different techniques:</p>
+
+<ul>
+<li>
+<p><strong>KP01 Branch &amp; Bound</strong> - with a few standard functions for computing the upper bound of nodes. In particular:</p>
+
+<ul>
+<li><p><em>Dantzig</em></p></li>
+<li><p><em>Optimized Dantzig</em></p></li>
+<li><p><em>Martello-Toth</em></p></li>
+</ul>
+</li>
+<li><p><strong>KP01 Dynamic Programming</strong> - keeping track of both active and dominated states</p></li>
+<li><p><strong>Optimized Dynamic programming</strong> - using recursive functions to compute just the value of the solution</p></li>
+</ul>
+
+<p>As shown in the screenshots below, the latest version of the application employs the <a href="https://github.com/giancosta86/EighthBridge">EighthBridge</a> library to actually <em>render the Knapsack tree</em> in a Branch &amp; Bound solution!</p>
+
+<h2>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h2>
+
+<p>KnapScal requires Java 8 Update 65 or later compatible version.</p>
+
+<h2>
+<a id="running-knapscal" class="anchor" href="#running-knapscal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Running KnapScal</h2>
+
+<p>The suggested way to run KnapScal is <a href="https://github.com/giancosta86/moondeploy">MoonDeploy</a>, as it will automatically download and launch the application - just click the <em>Run with MoonDeploy</em> button.</p>
+
+<p>Otherwise, to start the application:
+1. Download and decompress the binary zip archive
+2. Run the file <em>bin/KnapScal</em> (on UNIX) or <em>bin/KnapScal.bat</em> (on Windows)</p>
+
+<h2>
+<a id="important-note-on-branch--bound-solution" class="anchor" href="#important-note-on-branch--bound-solution" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Important note on Branch &amp; Bound solution</h2>
+
+<p>KnapScal now renders the Branch &amp; Bound solution as a tree, just as expected.</p>
+
+<p>However, the algorithm laying out the nodes is approximate - which might result in overlapping nodes.</p>
+
+<p>Consequently, when solving a Knapsack problem via Branch &amp; Bound, the application asks for 2 rendering parameters:</p>
+
+<ul>
+<li><p><strong>Estimated node width</strong> - affecting horizontal positioning</p></li>
+<li><p><strong>Estimated node height</strong> - affecting vertical positioning</p></li>
+</ul>
+
+<p>Sensible default values are provided; however, should you notice overlapping nodes, you can:</p>
+
+<ul>
+<li><p>Increase the estimated node size</p></li>
+<li><p>Drag &amp; drop the nodes in the tree itself, to reposition them</p></li>
+</ul>
+
+<h2>
+<a id="employing-the-kernel" class="anchor" href="#employing-the-kernel" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Employing the kernel</h2>
+
+<p><a href="https://github.com/giancosta86/KnapScal-core">KnapScal-core</a>, the underlying library, can be used in other applications for the JVM.</p>
+
+<h2>
+<a id="screenshots" class="anchor" href="#screenshots" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Screenshots</h2>
+
+<p><img src="screenshots/ProblemWindow.png" alt="Problem window"></p>
+
+<p><img src="screenshots/BranchBoundSolution.png" alt="Branch &amp; Bound solution"></p>
+
+<p><img src="screenshots/DynamicProgrammingSolution.png" alt="Dynamic programming solution"></p>
+
+<p><img src="screenshots/OptimizedDynamicProgrammingSolution.png" alt="Optimized dynamic programming solution"></p>
+
+<h2>
+<a id="further-references" class="anchor" href="#further-references" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Further references</h2>
+
+<ul>
+<li><p><a href="https://github.com/giancosta86/EighthBridge">EighthBridge</a> - Interactive graph modeling and rendering for ScalaFX</p></li>
+<li><p><a href="https://github.com/giancosta86/KnapScal-core">KnapScal-core</a> - Scala library for the Knapsack problem</p></li>
+<li><p><a href="http://www.or.deis.unibo.it/staff_pages/martello/Slides_LM_new.html">Professor Silvano Martello - Didactic slides</a></p></li>
+</ul>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/giancosta86/KnapScal">KnapScal</a> is maintained by <a href="https://github.com/giancosta86">giancosta86</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
