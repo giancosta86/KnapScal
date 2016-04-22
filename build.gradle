@@ -45,7 +45,7 @@ apply plugin: 'info.gianlucacosta.aurora'
 
 group = 'info.gianlucacosta.knapscal'
 archivesBaseName = 'knapscal'
-version = '2.0'
+version = '2.5'
 
 description = 'ScalaFX didactic application for the Knapsack problem'
 

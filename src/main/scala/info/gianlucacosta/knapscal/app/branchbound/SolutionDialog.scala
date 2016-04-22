@@ -27,9 +27,12 @@ import info.gianlucacosta.knapscal.app.branchbound.rendering.KnapScalVertex
 import info.gianlucacosta.knapscal.knapsack.branchbound.{Node, Solution}
 import info.gianlucacosta.knapscal.knapsack.{ItemsFormatter, Problem}
 
+import scalafx.Includes._
 import scalafx.geometry.{Dimension2D, Insets, Point2D}
 import scalafx.scene.control.Alert.AlertType
+import scalafx.scene.control.ScrollPane.ScrollBarPolicy
 import scalafx.scene.control._
+import scalafx.scene.input.{MouseEvent, ScrollEvent}
 import scalafx.scene.layout.BorderPane
 
 
@@ -79,13 +82,91 @@ private class SolutionDialog(problem: Problem, solution: Solution, estimatedNode
 
   private val visualGraph = buildVisualGraph
 
+  private val graphCanvas = new GraphCanvas(
+    new DragDropController,
+    visualGraph
+  )
+
   private val solutionScrollPane = new ScrollPane {
-    content = new GraphCanvas(
-      new DragDropController,
-      visualGraph
-    )
+    content = graphCanvas
 
     hvalue = hmax() / 2
+    hbarPolicy = ScrollBarPolicy.NEVER
+    vbarPolicy = ScrollBarPolicy.NEVER
+  }
+
+
+  private var dragAnchor: Point2D = _
+
+  solutionScrollPane.filterEvent(ScrollEvent.SCROLL) {
+    (event: ScrollEvent) => {
+      event.consume()
+
+      val MinScale = 0.2
+
+      val oldScale = graphCanvas.scaleX()
+
+      val scaleFactor = math.pow(1.01, event.deltaY / 5)
+
+      val newScale = math.max(
+        oldScale * scaleFactor,
+        MinScale
+      )
+
+      graphCanvas.scaleX() = newScale
+      graphCanvas.scaleY() = newScale
+
+      val zoomFactor = (newScale / oldScale) - 1
+
+      val canvasBounds = graphCanvas.getBoundsInParent
+
+      val dx = event.sceneX - (canvasBounds.width / 2 + canvasBounds.minX)
+      val dy = event.sceneY - (canvasBounds.height / 2 + canvasBounds.minY)
+
+      graphCanvas.translateX() -= zoomFactor * dx
+      graphCanvas.translateY() -= zoomFactor * dy
+
+      ()
+    }
+  }
+
+
+  solutionScrollPane.filterEvent(MouseEvent.MousePressed) {
+    (event: MouseEvent) => {
+      if (event.isControlDown) {
+        event.consume()
+
+        dragAnchor = new Point2D(
+          event.sceneX,
+          event.sceneY)
+      }
+    }
+  }
+
+
+  solutionScrollPane.filterEvent(MouseEvent.MouseDragged) {
+    (event: MouseEvent) => {
+      if (event.isControlDown && dragAnchor != null) {
+        event.consume()
+
+        val delta = new Point2D(
+          event.sceneX - dragAnchor.x,
+          event.sceneY - dragAnchor.y
+        )
+
+        graphCanvas.translateX() += delta.x
+        graphCanvas.translateY() += delta.y
+
+        dragAnchor = new Point2D(event.sceneX, event.sceneY)
+      }
+    }
+  }
+
+
+  solutionScrollPane.filterEvent(MouseEvent.MouseReleased) {
+    (event: MouseEvent) => {
+      dragAnchor = null
+    }
   }
 
 
