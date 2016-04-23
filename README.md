@@ -50,7 +50,7 @@ KnapScal now renders the Branch & Bound solution as a tree, just as expected.
 
 * To **zoom in/out**, use *the mouse wheel*
 
-* To **pan**, press *CTRL* and, *while keeping it pressed*, drag any point of the drawing
+* To **pan**, press *CTRL* and, *while holding it*, drag any point of the drawing
 
 
 ### Laying out the nodes
