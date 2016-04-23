@@ -31,6 +31,7 @@ buildscript {
         classpath 'info.gianlucacosta.moonlicense:moonlicense-gradle:4.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.1'
         classpath 'info.gianlucacosta.aurora:aurora:2.1'
+        classpath 'info.gianlucacosta.moondeploy:moondeploy-gradle:3.1'
     }
 }
 
@@ -40,6 +41,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 apply plugin: 'scala'
 apply plugin: 'application'
 apply plugin: 'info.gianlucacosta.aurora'
+apply plugin: 'info.gianlucacosta.moondeploy'
 
 
 
@@ -125,3 +127,40 @@ moonLicense {
         copyrightHolder = 'Gianluca Costa'
     }
 }
+
+
+task createAppDescriptor {
+    dependsOn(distZip)
+} << {
+    ant.moonDeploy(
+            baseURL: "${project.url}/releases/latest",
+
+            name: "${moonLicense.productInfo.productName}",
+            version: project.version,
+
+            description: project.description,
+            publisher: "Gianluca Costa",
+
+            skipPackageLevels: 1,
+
+            iconPath: "mainIcon.png"
+    ) {
+        commandLine {
+            param("bash")
+            param("bin/${project.name}")
+        }
+
+        pkg(name: "${project.name}-${project.version}.zip")
+
+        os(
+                name: "windows",
+                iconPath: "mainIcon.ico"
+        ) {
+            commandLine {
+                param("bin\\${project.name}.bat")
+            }
+        }
+    }
+}
+
+tasks["assemble"].dependsOn("createAppDescriptor")
