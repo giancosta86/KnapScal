@@ -94,3 +94,5 @@ Sensible default values are provided; however, should you notice overlapping nod
 * [KnapScal-core](https://github.com/giancosta86/KnapScal-core) - Scala library for the Knapsack problem
 
 * [Professor Silvano Martello - Didactic slides](http://www.or.deis.unibo.it/staff_pages/martello/Slides_LM_new.html)
+
+* [Knapsack Problems](http://www.or.deis.unibo.it/knapsack.html) - complete book, free to download! ^\_\_^
