@@ -40,11 +40,22 @@ Otherwise, to start the application:
 
 **Users already having KnapScal can just run the program: MoonDeploy will automatically update it to KnapScal 2**
 
-## Important note on Branch & Bound solution
+
+## Branch & Bound solution
 
 KnapScal now renders the Branch & Bound solution as a tree, just as expected.
 
-However, the algorithm laying out the nodes is approximate - which might result in overlapping nodes.
+
+### Zooming and panning
+
+* To **zoom in/out**, use *the mouse wheel*
+
+* To **pan**, press *CTRL* and, *while keeping it pressed*, drag any point of the drawing
+
+
+### Laying out the nodes
+
+The algorithm laying out the nodes is approximate - which might result in overlapping nodes.
 
 Consequently, when solving a Knapsack problem via Branch & Bound, the application asks for 2 rendering parameters:
 
@@ -54,9 +65,9 @@ Consequently, when solving a Knapsack problem via Branch & Bound, the applicatio
 
 Sensible default values are provided; however, should you notice overlapping nodes, you can:
 
-* Increase the estimated node size
-
 * Drag & drop the nodes in the tree itself, to reposition them
+
+* Re-run the algorithm, increasing the estimated node size
 
 
 
