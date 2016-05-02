@@ -23,15 +23,19 @@ package info.gianlucacosta.knapscal.app
 import javafx.application.Application
 import javafx.stage.Stage
 
+import info.gianlucacosta.knapscal.ArtifactInfo
+
+import scalafx.scene.image.Image
+
 private object App {
   def getResource(url: String) = getClass().getResource(url)
 }
 
 private class App extends Application {
   override def start(primaryStage: Stage): Unit = {
-    primaryStage.setTitle(AppInfo.getTitle)
+    primaryStage.setTitle(ArtifactInfo.title)
 
-    primaryStage.getIcons.addAll(AppInfo.getMainIcon(32))
+    primaryStage.getIcons.addAll(new Image(getClass.getResourceAsStream("/info/gianlucacosta/knapscal/icons/mainIcon32.png")))
 
     val mainScene = new MainScene
     primaryStage.setScene(mainScene)

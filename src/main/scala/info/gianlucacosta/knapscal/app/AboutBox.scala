@@ -20,6 +20,8 @@
 
 package info.gianlucacosta.knapscal.app
 
+import info.gianlucacosta.knapscal.ArtifactInfo
+
 import scalafx.Includes._
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.control.Alert.AlertType
@@ -30,14 +32,14 @@ import scalafx.scene.text.{Font, FontWeight}
 
 
 private object AboutBox extends Alert(AlertType.Information) {
-  title = s"About ${AppInfo.getName}..."
+  title = s"About ${ArtifactInfo.name}..."
   headerText = None
   contentText = null
 
   graphic = null
 
   dialogPane().setContent(new BorderPane {
-    left = new ImageView(new Image(AppInfo.getMainIcon(128)))
+    left = new ImageView(new Image(getClass.getResourceAsStream("/info/gianlucacosta/knapscal/icons/mainIcon128.png")))
 
     center = new VBox {
       padding = Insets(20)
@@ -46,20 +48,20 @@ private object AboutBox extends Alert(AlertType.Information) {
       children = Seq(
         new Label {
           font = Font.font("sans-serif", FontWeight.Bold, 22)
-          text = AppInfo.getName
+          text = ArtifactInfo.name
         },
 
         new Label {
-          text = s"Version ${AppInfo.getVersion}"
+          text = s"Version ${ArtifactInfo.version}"
         },
 
         new Label {
-          text = s"Copyright © ${AppInfo.getCopyrightYears} Gianluca Costa"
+          text = s"Copyright © ${ArtifactInfo.copyrightYears} Gianluca Costa"
         },
 
 
         new Label {
-          text = s"This software is released under the following license:\n   ${AppInfo.getLicense}"
+          text = s"This software is released under the following license:\n   ${ArtifactInfo.license}"
         },
 
         new Label {
@@ -81,7 +83,7 @@ private object AboutBox extends Alert(AlertType.Information) {
           prefWidth = 170
 
           onAction = handle({
-            DesktopUtils.openBrowser(AppInfo.getWebsite)
+            DesktopUtils.openBrowser(ArtifactInfo.website)
           })
         },
 
@@ -89,7 +91,7 @@ private object AboutBox extends Alert(AlertType.Information) {
           prefWidth = 170
 
           onAction = handle({
-            DesktopUtils.openBrowser(AppInfo.getFacebookPage)
+            DesktopUtils.openBrowser(ArtifactInfo.facebookPage)
           })
         }
       )
