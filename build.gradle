@@ -30,7 +30,7 @@ buildscript {
     dependencies {
         classpath 'info.gianlucacosta.moonlicense:moonlicense-gradle:4.1'
         classpath 'info.gianlucacosta.moondeploy:moondeploy-gradle:3.2'
-        classpath 'info.gianlucacosta.aurora:aurora:4.3'
+        classpath 'info.gianlucacosta.aurora:aurora:4.4'
     }
 }
 
@@ -43,7 +43,7 @@ apply plugin: 'info.gianlucacosta.aurora'
 
 group = 'info.gianlucacosta.knapscal'
 archivesBaseName = 'knapscal'
-version = '2.6'
+version = '2.7'
 
 
 description = 'ScalaFX didactic application for the Knapsack problem'
