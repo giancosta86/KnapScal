@@ -22,18 +22,15 @@ package info.gianlucacosta.knapscal.app.branchbound
 
 import info.gianlucacosta.eighthbridge.fx.canvas.GraphCanvas
 import info.gianlucacosta.eighthbridge.fx.canvas.basic.{BasicStyles, DefaultBasicLink, DragDropController}
-import info.gianlucacosta.eighthbridge.graphs.point2point.visual.{DefaultVisualGraph, DefaultVisualLink, VisualGraph}
 import info.gianlucacosta.knapscal.app.App
 import info.gianlucacosta.knapscal.app.branchbound.rendering.{KnapScalGraph, KnapScalVertex}
-import info.gianlucacosta.knapscal.knapsack.branchbound.{Node, Solution}
+import info.gianlucacosta.knapscal.knapsack.branchbound.Solution
 import info.gianlucacosta.knapscal.knapsack.{ItemsFormatter, Problem}
 
-import scalafx.Includes._
-import scalafx.geometry.{Dimension2D, Insets, Point2D}
+import scalafx.geometry.Insets
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control.ScrollPane.ScrollBarPolicy
 import scalafx.scene.control._
-import scalafx.scene.input.{MouseEvent, ScrollEvent}
 import scalafx.scene.layout.BorderPane
 
 

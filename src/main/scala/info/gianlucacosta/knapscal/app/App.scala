@@ -20,7 +20,6 @@
 
 package info.gianlucacosta.knapscal.app
 
-import javafx.scene.Node
 import javafx.stage.Stage
 
 import info.gianlucacosta.helios.apps.{AppInfo, AuroraAppInfo}
@@ -29,7 +28,6 @@ import info.gianlucacosta.knapscal.ArtifactInfo
 import info.gianlucacosta.knapscal.icons.MainIcon
 
 import scalafx.application.Platform
-import scalafx.stage.Screen
 
 
 object App extends AppMain[App](classOf[App])

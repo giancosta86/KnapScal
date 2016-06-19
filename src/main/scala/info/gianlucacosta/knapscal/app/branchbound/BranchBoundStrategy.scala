@@ -20,11 +20,8 @@
 
 package info.gianlucacosta.knapscal.app.branchbound
 
-import info.gianlucacosta.helios.fx.dialogs.InputDialogs
 import info.gianlucacosta.knapscal.knapsack.Problem
 import info.gianlucacosta.knapscal.knapsack.branchbound.{BranchBoundSolver, UpperBoundFunction}
-
-import scalafx.geometry.Dimension2D
 
 abstract class BranchBoundStrategy(name: String, upperBoundFunction: UpperBoundFunction) {
   def run(problem: Problem): Unit = {

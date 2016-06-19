@@ -25,7 +25,7 @@ import java.util.UUID
 
 import info.gianlucacosta.eighthbridge.fx.canvas.basic.DefaultBasicLink
 import info.gianlucacosta.eighthbridge.graphs.point2point.ArcBinding
-import info.gianlucacosta.eighthbridge.graphs.point2point.visual.{DefaultVisualLink, VisualGraph, VisualLink}
+import info.gianlucacosta.eighthbridge.graphs.point2point.visual.VisualGraph
 import info.gianlucacosta.knapscal.knapsack.branchbound.Node
 
 import scalafx.geometry.{BoundingBox, Bounds, Dimension2D, Point2D}
@@ -211,21 +211,21 @@ object KnapScalGraph {
 
 
           val currentCenterX: CenterX =
-              cumulatedTuplesInLevel.headOption.map(previousTupleInLevel => {
-                val (_, (previousCenterX: CenterX, previousWidth: Width)) = previousTupleInLevel
+            cumulatedTuplesInLevel.headOption.map(previousTupleInLevel => {
+              val (_, (previousCenterX: CenterX, previousWidth: Width)) = previousTupleInLevel
 
-                previousCenterX + previousWidth / 2 + HorizontalSpacing + currentWidth / 2
-              }).getOrElse({
-                if (takingNodeCenterXOption.isEmpty && leavingNodeCenterXOption.isEmpty)
-                  HorizontalSpacing + currentWidth / 2
-                else if (takingNodeCenterXOption.isEmpty || leavingNodeCenterXOption.isEmpty)
-                  takingNodeCenterXOption.getOrElse(leavingNodeCenterXOption.get)
-                else {
-                  val takingNode = currentNode.takingNode.get
-                  val takingNodeWidth = nodeSizes(takingNode).width
-                  takingNodeCenterXOption.get + takingNodeWidth / 2 + HorizontalSpacing / 2
-                }
-              })
+              previousCenterX + previousWidth / 2 + HorizontalSpacing + currentWidth / 2
+            }).getOrElse({
+              if (takingNodeCenterXOption.isEmpty && leavingNodeCenterXOption.isEmpty)
+                HorizontalSpacing + currentWidth / 2
+              else if (takingNodeCenterXOption.isEmpty || leavingNodeCenterXOption.isEmpty)
+                takingNodeCenterXOption.getOrElse(leavingNodeCenterXOption.get)
+              else {
+                val takingNode = currentNode.takingNode.get
+                val takingNodeWidth = nodeSizes(takingNode).width
+                takingNodeCenterXOption.get + takingNodeWidth / 2 + HorizontalSpacing / 2
+              }
+            })
 
 
           val currentTuple: (Node, (CenterX, Width)) =
@@ -233,7 +233,7 @@ object KnapScalGraph {
 
           Seq(currentTuple) ++ cumulatedTuplesInLevel
         })
-        .map {
+      .map {
         case (node, (centerX, _)) =>
           node -> centerX
       }
@@ -293,7 +293,7 @@ case class KnapScalGraph private(
                                   links: Set[DefaultBasicLink],
                                   bindings: Set[ArcBinding],
                                   selectionBounds: Bounds = new BoundingBox(0, 0, 0, 0)
-                   ) extends VisualGraph[KnapScalVertex, DefaultBasicLink, KnapScalGraph] {
+                                ) extends VisualGraph[KnapScalVertex, DefaultBasicLink, KnapScalGraph] {
   override def renderDirected: Boolean =
     true
 
@@ -301,17 +301,17 @@ case class KnapScalGraph private(
   override def dimension: Dimension2D = {
     val width =
       vertexes
-          .map(vertex =>
-            vertex.center.x + vertex.size.width / 2 + KnapScalGraph.HorizontalSpacing
-          )
-          .max
+        .map(vertex =>
+          vertex.center.x + vertex.size.width / 2 + KnapScalGraph.HorizontalSpacing
+        )
+        .max
 
     val height =
       vertexes
-            .map(vertex =>
-            vertex.center.y + vertex.size.height / 2 + KnapScalGraph.VerticalSpacing
-            )
-              .max
+        .map(vertex =>
+          vertex.center.y + vertex.size.height / 2 + KnapScalGraph.VerticalSpacing
+        )
+        .max
 
     new Dimension2D(width, height)
 

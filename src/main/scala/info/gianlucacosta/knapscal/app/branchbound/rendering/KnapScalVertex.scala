@@ -23,7 +23,6 @@ package info.gianlucacosta.knapscal.app.branchbound.rendering
 import java.util.UUID
 
 import info.gianlucacosta.eighthbridge.fx.canvas.basic.BasicVertex
-import info.gianlucacosta.eighthbridge.graphs.point2point.visual._
 import info.gianlucacosta.knapscal.knapsack.branchbound.Node
 
 import scalafx.geometry.{Dimension2D, Point2D}

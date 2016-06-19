@@ -31,7 +31,6 @@ import info.gianlucacosta.knapscal.knapsack.dynamic.full.DynamicProgrammingSolve
 import info.gianlucacosta.knapscal.knapsack.dynamic.optimized.OptimizedDynamicProgrammingSolver
 import info.gianlucacosta.knapscal.knapsack.{ItemsFormatter, ItemsParser, Problem}
 
-import scalafx.application.Platform
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control.{Alert, ChoiceDialog}
 

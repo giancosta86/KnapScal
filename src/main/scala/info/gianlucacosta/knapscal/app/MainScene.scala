@@ -24,7 +24,6 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
 import javafx.scene.layout.BorderPane
 
-import info.gianlucacosta.eighthbridge.fx.canvas.basic.BasicStyles
 import info.gianlucacosta.helios.apps.AppInfo
 
 import scalafx.application.Platform
