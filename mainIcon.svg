@@ -16,7 +16,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="mainIconsvg.svg">
+   sodipodi:docname="mainIcon.svg">
   <defs
      id="defs4">
     <linearGradient
@@ -186,10 +186,10 @@
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1366"
-     inkscape:window-height="719"
-     inkscape:window-x="0"
-     inkscape:window-y="25"
+     inkscape:window-width="1317"
+     inkscape:window-height="744"
+     inkscape:window-x="49"
+     inkscape:window-y="24"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -258,17 +258,5 @@
        d="m 541.8124,715.25649 -86.67223,-44.24287 -85.58202,46.31655 15.29427,-96.10198 -70.49596,-67.08074 96.12461,-15.15143 42.01313,-87.77472 44.114,86.73788 96.46149,12.83298 -68.86065,68.75838 z"
        inkscape:transform-center-x="0.54508402"
        inkscape:transform-center-y="-13.473792" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#250c29;fill-opacity:0.60645166;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="401.42859"
-       y="655.21936"
-       id="text4184"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan4186"
-         x="401.42859"
-         y="655.21936"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:150px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#250c29;fill-opacity:0.60645166">2</tspan></text>
   </g>
 </svg>

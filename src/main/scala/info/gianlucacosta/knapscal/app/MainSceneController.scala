@@ -24,15 +24,25 @@ import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.scene.control.{TextArea, TextField}
 
+import info.gianlucacosta.helios.apps.AppInfo
+import info.gianlucacosta.helios.fx.about.AboutBox
 import info.gianlucacosta.knapscal.app.branchbound.strategies.{DantzigStrategy, MartelloTothStrategy, OptimizedDantzigStrategy}
 import info.gianlucacosta.knapscal.knapsack.dynamic.full.DynamicProgrammingSolver
 import info.gianlucacosta.knapscal.knapsack.dynamic.optimized.OptimizedDynamicProgrammingSolver
 import info.gianlucacosta.knapscal.knapsack.{ItemsFormatter, ItemsParser, Problem}
 
+import scalafx.application.Platform
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control.{Alert, ChoiceDialog}
 
 private class MainSceneController {
+  private var aboutBox: AboutBox = _
+
+  def setup(appInfo: AppInfo): Unit = {
+    aboutBox = new AboutBox(appInfo)
+  }
+
+
   private val itemsParser = new ItemsParser
 
   @FXML
@@ -148,6 +158,6 @@ private class MainSceneController {
 
   @FXML
   private def showAboutBox(event: ActionEvent): Unit = {
-    AboutBox.showAndWait()
+    aboutBox.show()
   }
 }

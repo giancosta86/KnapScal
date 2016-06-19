@@ -21,9 +21,10 @@
 package info.gianlucacosta.knapscal.app.branchbound
 
 import info.gianlucacosta.eighthbridge.fx.canvas.GraphCanvas
-import info.gianlucacosta.eighthbridge.fx.canvas.basic.DragDropController
+import info.gianlucacosta.eighthbridge.fx.canvas.basic.{BasicStyles, DefaultBasicLink, DragDropController}
 import info.gianlucacosta.eighthbridge.graphs.point2point.visual.{DefaultVisualGraph, DefaultVisualLink, VisualGraph}
-import info.gianlucacosta.knapscal.app.branchbound.rendering.KnapScalVertex
+import info.gianlucacosta.knapscal.app.App
+import info.gianlucacosta.knapscal.app.branchbound.rendering.{KnapScalGraph, KnapScalVertex}
 import info.gianlucacosta.knapscal.knapsack.branchbound.{Node, Solution}
 import info.gianlucacosta.knapscal.knapsack.{ItemsFormatter, Problem}
 
@@ -36,12 +37,16 @@ import scalafx.scene.input.{MouseEvent, ScrollEvent}
 import scalafx.scene.layout.BorderPane
 
 
-private class SolutionDialog(problem: Problem, solution: Solution, estimatedNodeDimension: Dimension2D) extends Alert(AlertType.Information) {
+private class SolutionDialog(problem: Problem, solution: Solution) extends Alert(AlertType.Information) {
   title = "Knapsack - Branch & Bound"
   headerText = "Solution"
   contentText = solution.bestNode.toString
   resizable = true
 
+  dialogPane().getStylesheets.addAll(
+    BasicStyles.resourceUrl.toExternalForm,
+    App.getResource("KnapScal.css").toExternalForm
+  )
 
   private val solutionTextArea = new TextArea {
     prefHeight = 140
@@ -80,93 +85,15 @@ private class SolutionDialog(problem: Problem, solution: Solution, estimatedNode
   }
 
 
-  private val visualGraph = buildVisualGraph
-
-  private val graphCanvas = new GraphCanvas(
-    new DragDropController,
-    visualGraph
-  )
-
   private val solutionScrollPane = new ScrollPane {
-    content = graphCanvas
+    content = new GraphCanvas[KnapScalVertex, DefaultBasicLink, KnapScalGraph](
+      new DragDropController,
+      KnapScalGraph.create(solution.rootNode)
+    )
 
     hvalue = hmax() / 2
-    hbarPolicy = ScrollBarPolicy.NEVER
-    vbarPolicy = ScrollBarPolicy.NEVER
-  }
-
-
-  private var dragAnchor: Point2D = _
-
-  solutionScrollPane.filterEvent(ScrollEvent.SCROLL) {
-    (event: ScrollEvent) => {
-      event.consume()
-
-      val MinScale = 0.2
-
-      val oldScale = graphCanvas.scaleX()
-
-      val scaleFactor = math.pow(1.01, event.deltaY / 5)
-
-      val newScale = math.max(
-        oldScale * scaleFactor,
-        MinScale
-      )
-
-      graphCanvas.scaleX() = newScale
-      graphCanvas.scaleY() = newScale
-
-      val zoomFactor = (newScale / oldScale) - 1
-
-      val canvasBounds = graphCanvas.getBoundsInParent
-
-      val dx = event.sceneX - (canvasBounds.width / 2 + canvasBounds.minX)
-      val dy = event.sceneY - (canvasBounds.height / 2 + canvasBounds.minY)
-
-      graphCanvas.translateX() -= zoomFactor * dx
-      graphCanvas.translateY() -= zoomFactor * dy
-
-      ()
-    }
-  }
-
-
-  solutionScrollPane.filterEvent(MouseEvent.MousePressed) {
-    (event: MouseEvent) => {
-      if (event.isControlDown) {
-        event.consume()
-
-        dragAnchor = new Point2D(
-          event.sceneX,
-          event.sceneY)
-      }
-    }
-  }
-
-
-  solutionScrollPane.filterEvent(MouseEvent.MouseDragged) {
-    (event: MouseEvent) => {
-      if (event.isControlDown && dragAnchor != null) {
-        event.consume()
-
-        val delta = new Point2D(
-          event.sceneX - dragAnchor.x,
-          event.sceneY - dragAnchor.y
-        )
-
-        graphCanvas.translateX() += delta.x
-        graphCanvas.translateY() += delta.y
-
-        dragAnchor = new Point2D(event.sceneX, event.sceneY)
-      }
-    }
-  }
-
-
-  solutionScrollPane.filterEvent(MouseEvent.MouseReleased) {
-    (event: MouseEvent) => {
-      dragAnchor = null
-    }
+    hbarPolicy = ScrollBarPolicy.Never
+    vbarPolicy = ScrollBarPolicy.Never
   }
 
 
@@ -180,125 +107,4 @@ private class SolutionDialog(problem: Problem, solution: Solution, estimatedNode
   }
 
   dialogPane().setContent(solutionPane)
-
-
-  private def buildVisualGraph: VisualGraph = {
-    val horizontalLeafPadding = 10
-    val verticalPadding = 40
-
-    val itemsCount = problem.items.size
-    val levelsCount = itemsCount + 1
-    val leavesCount = math.pow(2, itemsCount)
-
-    val estimatedNodeWidth = estimatedNodeDimension.width
-    val estimatedNodeHeight = estimatedNodeDimension.height
-
-
-    val graphWidth =
-      (
-        2 * horizontalLeafPadding
-          + estimatedNodeDimension.width * leavesCount
-          + horizontalLeafPadding * (leavesCount - 1)
-        )
-
-
-    val graphHeight =
-      (
-        2 * verticalPadding
-          + estimatedNodeHeight * levelsCount
-          + verticalPadding * (levelsCount - 1)
-        )
-
-
-    def horizontalPadding(levelIndex: Int): Double =
-      if (levelIndex == levelsCount - 1) {
-        horizontalLeafPadding
-      } else {
-        val nextLevelPadding = horizontalPadding(levelIndex + 1)
-        nextLevelPadding + 2 * estimatedNodeWidth + (nextLevelPadding - estimatedNodeWidth)
-      }
-
-
-    val rootNode = solution.rootNode
-
-    val rootVertex = new KnapScalVertex(
-      center = new Point2D(
-        graphWidth / 2,
-        verticalPadding + estimatedNodeHeight / 2
-      ),
-
-      node = rootNode
-    )
-
-
-    val rootGraph = new DefaultVisualGraph(
-      false,
-      new Dimension2D(graphWidth, graphHeight)
-    ).addVertex(rootVertex)
-
-
-    def recursiveBuildGraph(parentGraph: VisualGraph, parentNode: Node, parentVertex: KnapScalVertex): VisualGraph = {
-      val currentLevelIndex = parentNode.level + 1
-
-      if (currentLevelIndex == levelsCount) {
-        return parentGraph
-      }
-
-      val currentHorizontalPadding = math.abs(horizontalPadding(currentLevelIndex))
-
-      val deltaFromParentCenter = new Point2D(
-        currentHorizontalPadding / 2 + estimatedNodeWidth,
-        verticalPadding + estimatedNodeHeight
-      )
-
-      var solutionGraph = parentGraph
-
-      parentNode.takingNode.foreach(takingNode => {
-        val takingVertex = new KnapScalVertex(
-          center = new Point2D(
-            parentVertex.center.x - deltaFromParentCenter.x,
-            parentVertex.center.y + deltaFromParentCenter.y
-          ),
-
-          node = takingNode
-        )
-
-        val takingLink = new DefaultVisualLink(text = s"X${currentLevelIndex} = 1")
-
-        val takingGraph =
-          solutionGraph
-            .addVertex(takingVertex)
-            .bindLink(parentVertex, takingVertex, takingLink)
-
-
-        solutionGraph = recursiveBuildGraph(takingGraph, takingNode, takingVertex)
-      })
-
-
-      parentNode.leavingNode.foreach(leavingNode => {
-        val leavingVertex = new KnapScalVertex(
-          center = new Point2D(
-            parentVertex.center.x + deltaFromParentCenter.x,
-            parentVertex.center.y + deltaFromParentCenter.y
-          ),
-
-          node = leavingNode
-        )
-
-        val leavingLink = new DefaultVisualLink(text = s"X${currentLevelIndex} = 0")
-
-        val leavingGraph = solutionGraph
-          .addVertex(leavingVertex)
-          .bindLink(parentVertex, leavingVertex, leavingLink)
-
-        solutionGraph = recursiveBuildGraph(leavingGraph, leavingNode, leavingVertex)
-      })
-
-
-      solutionGraph
-    }
-
-
-    recursiveBuildGraph(rootGraph, rootNode, rootVertex)
-  }
 }

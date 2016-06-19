@@ -22,17 +22,15 @@ package info.gianlucacosta.knapscal.app.branchbound.rendering
 
 import java.util.UUID
 
+import info.gianlucacosta.eighthbridge.fx.canvas.basic.BasicVertex
 import info.gianlucacosta.eighthbridge.graphs.point2point.visual._
 import info.gianlucacosta.knapscal.knapsack.branchbound.Node
 
-import scalafx.geometry.Point2D
+import scalafx.geometry.{Dimension2D, Point2D}
 
-case class KnapScalVertex(
-                           center: Point2D,
-                           node: Node, selected: Boolean = false,
-                           id: UUID = UUID.randomUUID()
-                         ) extends VisualVertex {
-  override def text: String =
+
+object KnapScalVertex {
+  def formatNode(node: Node): String =
     if (node.isSolution) {
       (
         s"Index = ${node.index}\n"
@@ -47,30 +45,36 @@ case class KnapScalVertex(
         + s"${if (node.isStopped) "\n*STOP*" else ""}"
         )
     }
+}
+
+case class KnapScalVertex(
+                           node: Node,
+                           center: Point2D,
+                           size: Dimension2D,
+                           selected: Boolean = false,
+
+                           id: UUID = UUID.randomUUID()
+                         ) extends BasicVertex[KnapScalVertex] {
+  override def text: String =
+    KnapScalVertex.formatNode(node)
 
 
-  override def settings: VisualVertexSettings =
+  override def padding: Double = 0
+
+
+  override def styleClass: String =
     if (node.isSolution)
-      KnapScalSolutionVertexSettings
+      "solution"
     else if (node.isStopped)
-      KnapScalStoppedVertexSettings
+      "stopped"
     else
-      VisualVertexDefaultSettings
+      ""
 
 
-  override def selectedSettings: VisualVertexSettings =
-    if (node.isSolution)
-      KnapScalSolutionVertexSelectedSettings
-    else if (node.isStopped)
-      KnapScalStoppedVertexSelectedSettings
-    else
-      VisualVertexDefaultSelectedSettings
+  override def visualCopy(center: Point2D, selected: Boolean): KnapScalVertex =
+    copy(center = center, selected = selected)
 
 
-  override def visualCopy(center: Point2D, text: String, selected: Boolean): VisualVertex =
-    copy(
-      center = center,
-      //Do NOT copy the text
-      selected = selected
-    )
+  override def sizeOption: Option[Dimension2D] =
+    Some(size)
 }

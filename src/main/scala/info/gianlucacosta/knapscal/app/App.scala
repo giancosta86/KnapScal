@@ -20,26 +20,37 @@
 
 package info.gianlucacosta.knapscal.app
 
-import javafx.application.Application
+import javafx.scene.Node
 import javafx.stage.Stage
 
+import info.gianlucacosta.helios.apps.{AppInfo, AuroraAppInfo}
+import info.gianlucacosta.helios.fx.apps.{AppBase, AppMain, SplashStage}
 import info.gianlucacosta.knapscal.ArtifactInfo
+import info.gianlucacosta.knapscal.icons.MainIcon
 
-import scalafx.scene.image.Image
+import scalafx.application.Platform
+import scalafx.stage.Screen
 
-private object App {
-  def getResource(url: String) = getClass().getResource(url)
-}
 
-private class App extends Application {
-  override def start(primaryStage: Stage): Unit = {
-    primaryStage.setTitle(ArtifactInfo.title)
+object App extends AppMain[App](classOf[App])
 
-    primaryStage.getIcons.addAll(new Image(getClass.getResourceAsStream("/info/gianlucacosta/knapscal/icons/mainIcon32.png")))
+class App extends AppBase(AuroraAppInfo(ArtifactInfo, MainIcon)) {
+  override def startup(appInfo: AppInfo, splashStage: SplashStage, primaryStage: Stage): Unit = {
+    val mainScene = new MainScene(appInfo)
 
-    val mainScene = new MainScene
-    primaryStage.setScene(mainScene)
+    Platform.runLater {
+      primaryStage.setScene(mainScene)
+    }
 
-    primaryStage.show()
+    Platform.runLater {
+      primaryStage.sizeToScene()
+    }
+
+    Platform.runLater {
+      primaryStage.show()
+
+      primaryStage.centerOnScreen()
+    }
   }
 }
+

@@ -20,7 +20,7 @@
 
 package info.gianlucacosta.knapscal.app.branchbound
 
-import info.gianlucacosta.eighthbridge.util.fx.dialogs.InputDialogs
+import info.gianlucacosta.helios.fx.dialogs.InputDialogs
 import info.gianlucacosta.knapscal.knapsack.Problem
 import info.gianlucacosta.knapscal.knapsack.branchbound.{BranchBoundSolver, UpperBoundFunction}
 
@@ -31,34 +31,7 @@ abstract class BranchBoundStrategy(name: String, upperBoundFunction: UpperBoundF
     val solver = new BranchBoundSolver(upperBoundFunction)
     val solution = solver.solve(problem)
 
-    val estimatedNodeWidthInput = InputDialogs.askForDouble(
-      message = "Increase if nodes overlap:",
-      initialValue = 30,
-      minValue = 0,
-      header = "Estimated node width")
-
-    if (estimatedNodeWidthInput.isEmpty) {
-      return
-    }
-
-
-    val estimatedNodeHeightInput = InputDialogs.askForDouble(
-      message = "Increase if nodes overlap:",
-      initialValue = 150,
-      minValue = 0,
-      header = "Estimated node height")
-
-    if (estimatedNodeHeightInput.isEmpty) {
-      return
-    }
-
-
-    val estimatedNodeDimension = new Dimension2D(
-      estimatedNodeWidthInput.get,
-      estimatedNodeHeightInput.get
-    )
-
-    val solutionDialog = new SolutionDialog(problem, solution, estimatedNodeDimension)
+    val solutionDialog = new SolutionDialog(problem, solution)
     solutionDialog.showAndWait()
   }
 

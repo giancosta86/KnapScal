@@ -1,0 +1,24 @@
+/*----------
+ * SOLUTION
+ *----------*/
+
+.solution > .body {
+    -fx-fill: #baffba;
+}
+
+.solution:selected > .body {
+    -fx-fill: #69d469;
+}
+
+
+/*---------
+ * STOPPED
+ *---------*/
+
+.stopped > .body {
+    -fx-fill: #f8c7c7;
+}
+
+.stopped:selected > .body {
+    -fx-fill: #e56767;
+}
