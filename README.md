@@ -21,12 +21,16 @@ It can solve an instance of the problem by employing different techniques:
 * **Optimized Dynamic programming** - using recursive functions to compute just the value of the solution
 
 
-As shown in the screenshots below, the latest version of the application employs the [EighthBridge](https://github.com/giancosta86/EighthBridge) library to actually *render the Knapsack tree* in a Branch & Bound solution!
+As shown in the screenshots below, the latest version of the application employs the [EighthBridge](https://github.com/giancosta86/EighthBridge) library to actually *render the Knapsack tree* in a Branch and Bound solution!
+
+
+![Branch & Bound solution](screenshots/BranchBoundSolution.png)
+
 
 
 ## Requirements
 
-KnapScal requires Java 8 Update 65 or later compatible version.
+KnapScal requires Java 8 Update 91 or later compatible version.
 
 
 
@@ -55,20 +59,7 @@ KnapScal now renders the Branch & Bound solution as a tree, just as expected.
 
 ### Laying out the nodes
 
-The algorithm laying out the nodes is approximate - which might result in overlapping nodes.
-
-Consequently, when solving a Knapsack problem via Branch & Bound, the application asks for 2 rendering parameters:
-
-* **Estimated node width** - affecting horizontal positioning
-
-* **Estimated node height** - affecting vertical positioning
-
-Sensible default values are provided; however, should you notice overlapping nodes, you can:
-
-* Drag & drop the nodes in the tree itself, to reposition them
-
-* Re-run the algorithm, increasing the estimated node size
-
+Starting from version 3, KnapScal automatically lays out the tree nodes; however, should you notice overlapping nodes, you can drag & drop the nodes in the tree itself, to reposition them
 
 
 ## Employing the kernel
@@ -86,6 +77,13 @@ Sensible default values are provided; however, should you notice overlapping nod
 ![Dynamic programming solution](screenshots/DynamicProgrammingSolution.png)
 
 ![Optimized dynamic programming solution](screenshots/OptimizedDynamicProgrammingSolution.png)
+
+
+## Special thanks
+
+Special thanks to [Professor Silvano Martello](http://www.or.deis.unibo.it/staff_pages/martello/cvitae.html) for his valuable advice and suggestions.
+
+
 
 ## Further references
 
