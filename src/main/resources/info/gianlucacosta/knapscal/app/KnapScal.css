@@ -1,3 +1,9 @@
+.vertex > .label {
+    -fx-font: 14 Arial;
+    -fx-fill: black;
+}
+
+
 /*----------
  * SOLUTION
  *----------*/

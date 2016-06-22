@@ -23,7 +23,7 @@ package info.gianlucacosta.knapscal.app.branchbound.rendering
 
 import java.util.UUID
 
-import info.gianlucacosta.eighthbridge.fx.canvas.basic.{DefaultBasicLink, LinkArrow}
+import info.gianlucacosta.eighthbridge.fx.canvas.basic.{BasicVertex, DefaultBasicLink, LinkArrow}
 import info.gianlucacosta.eighthbridge.graphs.point2point.ArcBinding
 import info.gianlucacosta.eighthbridge.graphs.point2point.visual.VisualGraph
 import info.gianlucacosta.knapscal.knapsack.branchbound.Node
@@ -62,7 +62,12 @@ object KnapScalGraph {
 
     val nodeSizes: Map[Node, Dimension2D] =
       allNodes
-        .map(node => node -> estimateNodeSize(node))
+        .map(node =>
+          node -> BasicVertex.estimateVertexSize(
+            KnapScalVertex.formatNode(node),
+            KnapScalVertex.FontDimension,
+            10
+          ))
         .toMap
 
 
@@ -171,21 +176,6 @@ object KnapScalGraph {
     )
 
     takingSubtree ++ leavingSubtree
-  }
-
-
-  private def estimateNodeSize(node: Node): Dimension2D = {
-    val nodeLines = KnapScalVertex.formatNode(node).split("\n")
-
-    val width =
-      11 * nodeLines
-        .map(_.length)
-        .max
-
-    val height =
-      20 + 16 * nodeLines.length
-
-    new Dimension2D(width, height)
   }
 
 
@@ -307,14 +297,14 @@ case class KnapScalGraph private(
     val width =
       vertexes
         .map(vertex =>
-          vertex.center.x + vertex.size.width / 2 + KnapScalGraph.HorizontalSpacing
+          vertex.center.x + vertex.dimension.width / 2 + KnapScalGraph.HorizontalSpacing
         )
         .max
 
     val height =
       vertexes
         .map(vertex =>
-          vertex.center.y + vertex.size.height / 2 + KnapScalGraph.VerticalSpacing
+          vertex.center.y + vertex.dimension.height / 2 + KnapScalGraph.VerticalSpacing
         )
         .max
 

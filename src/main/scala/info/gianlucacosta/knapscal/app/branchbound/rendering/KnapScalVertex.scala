@@ -44,12 +44,15 @@ object KnapScalVertex {
         + s"${if (node.isStopped) "\n*STOP*" else ""}"
         )
     }
+
+
+  val FontDimension = new Dimension2D(12, 19)
 }
 
 case class KnapScalVertex(
                            node: Node,
                            center: Point2D,
-                           size: Dimension2D,
+                           dimension: Dimension2D,
                            selected: Boolean = false,
 
                            id: UUID = UUID.randomUUID()
@@ -57,8 +60,6 @@ case class KnapScalVertex(
   override def text: String =
     KnapScalVertex.formatNode(node)
 
-
-  override def padding: Double = 0
 
 
   override def styleClass: String =
@@ -72,8 +73,4 @@ case class KnapScalVertex(
 
   override def visualCopy(center: Point2D, selected: Boolean): KnapScalVertex =
     copy(center = center, selected = selected)
-
-
-  override def sizeOption: Option[Dimension2D] =
-    Some(size)
 }
