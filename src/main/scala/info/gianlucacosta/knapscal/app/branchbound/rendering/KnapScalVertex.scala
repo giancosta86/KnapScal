@@ -62,13 +62,13 @@ case class KnapScalVertex(
 
 
 
-  override def styleClass: String =
+  override def styleClasses: Seq[String] =
     if (node.isSolution)
-      "solution"
+      Seq("solution")
     else if (node.isStopped)
-      "stopped"
+      Seq("stopped")
     else
-      ""
+      Seq()
 
 
   override def visualCopy(center: Point2D, selected: Boolean): KnapScalVertex =

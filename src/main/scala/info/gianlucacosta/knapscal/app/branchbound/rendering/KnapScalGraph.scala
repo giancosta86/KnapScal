@@ -23,7 +23,7 @@ package info.gianlucacosta.knapscal.app.branchbound.rendering
 
 import java.util.UUID
 
-import info.gianlucacosta.eighthbridge.fx.canvas.basic.{BasicVertex, DefaultBasicLink, LinkArrow}
+import info.gianlucacosta.eighthbridge.fx.canvas.basic.{BasicVertex, DefaultBasicLink}
 import info.gianlucacosta.eighthbridge.graphs.point2point.ArcBinding
 import info.gianlucacosta.eighthbridge.graphs.point2point.visual.VisualGraph
 import info.gianlucacosta.knapscal.knapsack.branchbound.Node
@@ -39,9 +39,6 @@ object KnapScalGraph {
   private type CenterY = Double
   private type Width = Double
   private type Height = Double
-
-  private val LinkArrow = new LinkArrow(relativePosition = 0.65)
-
 
   def create(rootNode: Node): KnapScalGraph = {
     val nodeParentTuples: Seq[(Node, Node)] =
@@ -265,9 +262,7 @@ object KnapScalGraph {
           vertexMap(leavingNode)
 
         val leavingLink =
-          new DefaultBasicLink(
-            arrow = LinkArrow
-          )
+          new DefaultBasicLink
 
 
         val arcBinding =
