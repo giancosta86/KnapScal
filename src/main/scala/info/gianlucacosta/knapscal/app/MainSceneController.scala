@@ -58,7 +58,7 @@ private class MainSceneController {
     }
 
 
-    val choices = Seq(
+    val choices = List(
       new DantzigStrategy,
       new OptimizedDantzigStrategy,
       new MartelloTothStrategy

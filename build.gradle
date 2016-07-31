@@ -43,7 +43,7 @@ apply plugin: 'info.gianlucacosta.aurora'
 
 group = 'info.gianlucacosta.knapscal'
 archivesBaseName = 'knapscal'
-version = '3.1'
+version = '3.2'
 
 
 description = 'ScalaFX didactic application for the Knapsack problem'
@@ -60,7 +60,7 @@ dependencies {
     compile 'org.scala-lang:scala-library:2.11.8'
 
     compile 'info.gianlucacosta.knapscal:knapscal-core:1.3'
-    compile 'info.gianlucacosta.eighthbridge:eighthbridge:4.0'
+    compile 'info.gianlucacosta.eighthbridge:eighthbridge:8.0'
 }
 
 
@@ -85,9 +85,9 @@ aurora {
     }
 
     javaVersion {
-      major = 1
-      minor = 8
-      build = 0
-      update = 91
+        major = 1
+        minor = 8
+        build = 0
+        update = 91
     }
 }

@@ -25,7 +25,7 @@ import java.util.UUID
 import info.gianlucacosta.eighthbridge.fx.canvas.basic.BasicVertex
 import info.gianlucacosta.knapscal.knapsack.branchbound.Node
 
-import scalafx.geometry.{Dimension2D, Point2D}
+import scalafx.geometry.Point2D
 
 
 object KnapScalVertex {
@@ -44,15 +44,11 @@ object KnapScalVertex {
         + s"${if (node.isStopped) "\n*STOP*" else ""}"
         )
     }
-
-
-  val FontDimension = new Dimension2D(12, 19)
 }
 
 case class KnapScalVertex(
                            node: Node,
                            center: Point2D,
-                           dimension: Dimension2D,
                            selected: Boolean = false,
 
                            id: UUID = UUID.randomUUID()
@@ -61,14 +57,13 @@ case class KnapScalVertex(
     KnapScalVertex.formatNode(node)
 
 
-
-  override def styleClasses: Seq[String] =
+  override def styleClasses: List[String] =
     if (node.isSolution)
-      Seq("solution")
+      List("solution")
     else if (node.isStopped)
-      Seq("stopped")
+      List("stopped")
     else
-      Seq()
+      List()
 
 
   override def visualCopy(center: Point2D, selected: Boolean): KnapScalVertex =

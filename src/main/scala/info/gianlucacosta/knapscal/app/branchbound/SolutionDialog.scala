@@ -21,15 +21,13 @@
 package info.gianlucacosta.knapscal.app.branchbound
 
 import info.gianlucacosta.eighthbridge.fx.canvas.GraphCanvas
-import info.gianlucacosta.eighthbridge.fx.canvas.basic.{BasicStyles, DefaultBasicLink, DragDropController}
-import info.gianlucacosta.knapscal.app.App
+import info.gianlucacosta.eighthbridge.fx.canvas.basic.{DefaultBasicLink, DragDropController}
 import info.gianlucacosta.knapscal.app.branchbound.rendering.{KnapScalGraph, KnapScalVertex}
 import info.gianlucacosta.knapscal.knapsack.branchbound.Solution
 import info.gianlucacosta.knapscal.knapsack.{ItemsFormatter, Problem}
 
 import scalafx.geometry.Insets
 import scalafx.scene.control.Alert.AlertType
-import scalafx.scene.control.ScrollPane.ScrollBarPolicy
 import scalafx.scene.control._
 import scalafx.scene.layout.BorderPane
 
@@ -41,8 +39,7 @@ private class SolutionDialog(problem: Problem, solution: Solution) extends Alert
   resizable = true
 
   dialogPane().getStylesheets.addAll(
-    BasicStyles.resourceUrl.toExternalForm,
-    App.getResource("KnapScal.css").toExternalForm
+    KnapScalGraph.Stylesheets: _*
   )
 
   private val solutionTextArea = new TextArea {
@@ -84,13 +81,11 @@ private class SolutionDialog(problem: Problem, solution: Solution) extends Alert
 
   private val solutionScrollPane = new ScrollPane {
     content = new GraphCanvas[KnapScalVertex, DefaultBasicLink, KnapScalGraph](
-      new DragDropController,
+      new DragDropController(true),
       KnapScalGraph.create(solution.rootNode)
     )
 
     hvalue = hmax() / 2
-    hbarPolicy = ScrollBarPolicy.Never
-    vbarPolicy = ScrollBarPolicy.Never
   }
 
 

@@ -23,12 +23,13 @@ package info.gianlucacosta.knapscal.app.branchbound.rendering
 
 import java.util.UUID
 
-import info.gianlucacosta.eighthbridge.fx.canvas.basic.{BasicVertex, DefaultBasicLink}
+import info.gianlucacosta.eighthbridge.fx.canvas.basic._
 import info.gianlucacosta.eighthbridge.graphs.point2point.ArcBinding
 import info.gianlucacosta.eighthbridge.graphs.point2point.visual.VisualGraph
+import info.gianlucacosta.knapscal.app.App
 import info.gianlucacosta.knapscal.knapsack.branchbound.Node
 
-import scalafx.geometry.{BoundingBox, Bounds, Dimension2D, Point2D}
+import scalafx.geometry.{Dimension2D, Point2D}
 
 
 object KnapScalGraph {
@@ -40,8 +41,15 @@ object KnapScalGraph {
   private type Width = Double
   private type Height = Double
 
+
+  val Stylesheets = List[String](
+    BasicStyles.resourceUrl.toExternalForm,
+    App.getResource("KnapScal.css").toExternalForm
+  )
+
+
   def create(rootNode: Node): KnapScalGraph = {
-    val nodeParentTuples: Seq[(Node, Node)] =
+    val nodeParentTuples: List[(Node, Node)] =
       getNodeParentTuples(rootNode)
 
 
@@ -51,24 +59,33 @@ object KnapScalGraph {
 
 
     val allNodes =
-      Seq(rootNode) ++
+      List(rootNode) ++
         nodeParentTuples
           .map(_._1)
           .distinct
 
 
-    val nodeSizes: Map[Node, Dimension2D] =
+
+    val nodeDimensionQueries =
+      allNodes.map(node =>
+        BasicVertexNode.DimensionQuery(
+          KnapScalVertex.formatNode(node)
+        )
+      )
+
+
+    val nodeDimensions: Map[Node, Dimension2D] =
       allNodes
-        .map(node =>
-          node -> BasicVertex.estimateVertexSize(
-            KnapScalVertex.formatNode(node),
-            KnapScalVertex.FontDimension,
-            10
-          ))
+        .zip(
+          BasicVertexNode.getDimensions(
+            KnapScalGraph.Stylesheets,
+            nodeDimensionQueries
+          )
+        )
         .toMap
 
 
-    val levelNodes: Map[Int, Seq[Node]] =
+    val levelNodes: Map[Int, List[Node]] =
       allNodes
         .groupBy(_.level)
 
@@ -77,7 +94,7 @@ object KnapScalGraph {
       levelNodes.map {
         case (levelIndex, nodes) =>
           levelIndex ->
-            nodes.map(node => nodeSizes(node).height).max
+            nodes.map(node => nodeDimensions(node).height).max
       }
 
 
@@ -87,11 +104,11 @@ object KnapScalGraph {
 
     val levelCenterYs: Map[Int, CenterY] = {
       val rootCenterY =
-        VerticalSpacing + nodeSizes(rootNode).height / 2
+        VerticalSpacing + nodeDimensions(rootNode).height / 2
 
 
       Range.inclusive(1, lastLevelIndex)
-        .foldLeft(Seq(rootCenterY))((cumulatedCenterYs, currentLevel) => {
+        .foldLeft(List(rootCenterY))((cumulatedCenterYs, currentLevel) => {
           val previousLevel = currentLevel - 1
           val previousHeight = levelHeights(previousLevel)
           val previousCenterY = cumulatedCenterYs.head
@@ -100,7 +117,7 @@ object KnapScalGraph {
 
           val currentCenterY = previousCenterY + previousHeight / 2 + VerticalSpacing + currentHeight / 2
 
-          Seq(currentCenterY) ++ cumulatedCenterYs
+          List(currentCenterY) ++ cumulatedCenterYs
         })
         .reverse
         .zipWithIndex
@@ -117,7 +134,7 @@ object KnapScalGraph {
         .foldLeft(Map[Node, CenterX]())((cumulatedCenterXs, levelIndex) => {
           val currentNodes = levelNodes(levelIndex)
 
-          cumulatedCenterXs ++ getLevelCenterXs(cumulatedCenterXs, currentNodes, nodeSizes)
+          cumulatedCenterXs ++ getLevelCenterXs(cumulatedCenterXs, currentNodes, nodeDimensions)
         })
 
 
@@ -134,15 +151,20 @@ object KnapScalGraph {
           new Point2D(
             centerXs(node),
             levelCenterYs(node.level)
-          ),
-
-          nodeSizes(node)
+          )
         )
       )
         .toMap
 
 
-    val (links: Seq[DefaultBasicLink], bindings: Seq[ArcBinding]) =
+    val vertexDimensions: Map[KnapScalVertex, Dimension2D] =
+      nodeDimensions.map {
+        case (node, dimension) =>
+          vertexMap(node) -> dimension
+      }
+
+
+    val (links: List[DefaultBasicLink], bindings: List[ArcBinding]) =
       createLinksAndBindings(vertexMap, rootNode)
         .unzip
 
@@ -150,37 +172,38 @@ object KnapScalGraph {
     new KnapScalGraph(
       vertexMap.values.toSet,
       links.toSet,
-      bindings.toSet
+      bindings.toSet,
+      vertexDimensions
     )
   }
 
 
   private def getNodeParentTuples(currentRootNode: Node)
-  : Seq[(Node, Node)] = {
-    val takingSubtree: Seq[(Node, Node)] = currentRootNode.takingNode.map(takingNode =>
-      Seq(takingNode -> currentRootNode) ++
+  : List[(Node, Node)] = {
+    val takingSubtree: List[(Node, Node)] = currentRootNode.takingNode.map(takingNode =>
+      List(takingNode -> currentRootNode) ++
         getNodeParentTuples(takingNode)
     ).getOrElse(
-      Seq()
+      List()
     )
 
 
-    val leavingSubtree: Seq[(Node, Node)] = currentRootNode.leavingNode.map(leavingNode =>
-      Seq(leavingNode -> currentRootNode) ++
+    val leavingSubtree: List[(Node, Node)] = currentRootNode.leavingNode.map(leavingNode =>
+      List(leavingNode -> currentRootNode) ++
         getNodeParentTuples(leavingNode)
     ).getOrElse(
-      Seq()
+      List()
     )
 
     takingSubtree ++ leavingSubtree
   }
 
 
-  private def getLevelCenterXs(lowerLevelCenterXs: Map[Node, CenterX], levelNodes: Seq[Node], nodeSizes: Map[Node, Dimension2D])
+  private def getLevelCenterXs(lowerLevelCenterXs: Map[Node, CenterX], levelNodes: List[Node], nodeSizes: Map[Node, Dimension2D])
   : Map[Node, CenterX] = {
 
     levelNodes
-      .foldLeft(Seq[(Node, (CenterX, Width))]())(
+      .foldLeft(List[(Node, (CenterX, Width))]())(
         (cumulatedTuplesInLevel, currentNode) => {
 
           val takingNodeCenterXOption: Option[CenterX] =
@@ -220,7 +243,7 @@ object KnapScalGraph {
           val currentTuple: (Node, (CenterX, Width)) =
             currentNode ->(currentCenterX, currentWidth)
 
-          Seq(currentTuple) ++ cumulatedTuplesInLevel
+          List(currentTuple) ++ cumulatedTuplesInLevel
         })
       .map {
         case (node, (centerX, _)) =>
@@ -234,11 +257,11 @@ object KnapScalGraph {
                                       vertexMap: Map[Node, KnapScalVertex],
                                       currentRootNode: Node
                                     ):
-  Seq[(DefaultBasicLink, ArcBinding)] = {
+  List[(DefaultBasicLink, ArcBinding)] = {
     val currentRootVertex =
       vertexMap(currentRootNode)
 
-    val takingSequence: Seq[(DefaultBasicLink, ArcBinding)] =
+    val takingSequence: List[(DefaultBasicLink, ArcBinding)] =
       currentRootNode.takingNode.map(takingNode => {
         val takingVertex =
           vertexMap(takingNode)
@@ -249,14 +272,14 @@ object KnapScalGraph {
         val arcBinding =
           ArcBinding(UUID.randomUUID(), currentRootVertex.id, takingVertex.id, takingLink.id)
 
-        Seq(takingLink -> arcBinding) ++
+        List(takingLink -> arcBinding) ++
           createLinksAndBindings(vertexMap, takingNode)
       })
 
-        .getOrElse(Seq())
+        .getOrElse(List())
 
 
-    val leavingSequence: Seq[(DefaultBasicLink, ArcBinding)] =
+    val leavingSequence: List[(DefaultBasicLink, ArcBinding)] =
       currentRootNode.leavingNode.map(leavingNode => {
         val leavingVertex =
           vertexMap(leavingNode)
@@ -268,10 +291,10 @@ object KnapScalGraph {
         val arcBinding =
           ArcBinding(UUID.randomUUID(), currentRootVertex.id, leavingVertex.id, leavingLink.id)
 
-        Seq(leavingLink -> arcBinding) ++
+        List(leavingLink -> arcBinding) ++
           createLinksAndBindings(vertexMap, leavingNode)
       })
-        .getOrElse(Seq())
+        .getOrElse(List())
 
     takingSequence ++ leavingSequence
   }
@@ -282,35 +305,8 @@ case class KnapScalGraph private(
                                   vertexes: Set[KnapScalVertex],
                                   links: Set[DefaultBasicLink],
                                   bindings: Set[ArcBinding],
-                                  selectionBounds: Bounds = new BoundingBox(0, 0, 0, 0)
+                                  vertexDimensions: Map[KnapScalVertex, Dimension2D]
                                 ) extends VisualGraph[KnapScalVertex, DefaultBasicLink, KnapScalGraph] {
-  override def renderDirected: Boolean =
-    true
-
-
-  override def dimension: Dimension2D = {
-    val width =
-      vertexes
-        .map(vertex =>
-          vertex.center.x + vertex.dimension.width / 2 + KnapScalGraph.HorizontalSpacing
-        )
-        .max
-
-    val height =
-      vertexes
-        .map(vertex =>
-          vertex.center.y + vertex.dimension.height / 2 + KnapScalGraph.VerticalSpacing
-        )
-        .max
-
-    new Dimension2D(width, height)
-
-  }
-
-
-  override def visualCopy(renderDirected: Boolean, dimension: Dimension2D, selectionBounds: Bounds): KnapScalGraph =
-    copy(selectionBounds = selectionBounds)
-
 
   override protected def graphCopy(vertexes: Set[KnapScalVertex], links: Set[DefaultBasicLink], bindings: Set[ArcBinding]): KnapScalGraph =
     copy(
